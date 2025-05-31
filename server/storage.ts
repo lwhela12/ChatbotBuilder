@@ -1,4 +1,6 @@
 import { flows, type Flow, type InsertFlow } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getFlow(id: number): Promise<Flow | undefined>;
@@ -8,43 +10,40 @@ export interface IStorage {
   getAllFlows(): Promise<Flow[]>;
 }
 
-export class MemStorage implements IStorage {
-  private flows: Map<number, Flow>;
-  currentId: number;
-
-  constructor() {
-    this.flows = new Map();
-    this.currentId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getFlow(id: number): Promise<Flow | undefined> {
-    return this.flows.get(id);
+    const [flow] = await db.select().from(flows).where(eq(flows.id, id));
+    return flow || undefined;
   }
 
   async getLatestFlow(): Promise<Flow | undefined> {
-    const allFlows = Array.from(this.flows.values());
-    return allFlows.length > 0 ? allFlows[allFlows.length - 1] : undefined;
+    const [flow] = await db.select().from(flows).orderBy(desc(flows.id)).limit(1);
+    return flow || undefined;
   }
 
   async createFlow(insertFlow: InsertFlow): Promise<Flow> {
-    const id = this.currentId++;
-    const flow: Flow = { ...insertFlow, id };
-    this.flows.set(id, flow);
+    const [flow] = await db
+      .insert(flows)
+      .values({
+        name: insertFlow.name || "Untitled Flow",
+        flowData: insertFlow.flowData
+      })
+      .returning();
     return flow;
   }
 
   async updateFlow(id: number, flowUpdate: Partial<InsertFlow>): Promise<Flow | undefined> {
-    const existingFlow = this.flows.get(id);
-    if (!existingFlow) return undefined;
-    
-    const updatedFlow: Flow = { ...existingFlow, ...flowUpdate };
-    this.flows.set(id, updatedFlow);
-    return updatedFlow;
+    const [flow] = await db
+      .update(flows)
+      .set(flowUpdate)
+      .where(eq(flows.id, id))
+      .returning();
+    return flow || undefined;
   }
 
   async getAllFlows(): Promise<Flow[]> {
-    return Array.from(this.flows.values());
+    return await db.select().from(flows).orderBy(desc(flows.id));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
