@@ -22,6 +22,7 @@ export default function FlowBuilder() {
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [lastSaved, setLastSaved] = useState<string>("Never");
   const [draggedNodeType, setDraggedNodeType] = useState<string | null>(null);
+  const [lastAddedNodeId, setLastAddedNodeId] = useState<string | null>(null);
 
   // Load flow data
   const { data: flowData, isLoading } = useQuery({
@@ -70,6 +71,25 @@ export default function FlowBuilder() {
     const existingNodes = nodes.filter(node => node.type === type);
     return `${type}-node-${existingNodes.length + 1}`;
   };
+
+  // Handle node editing (click to edit)
+  const handleEditNode = useCallback((nodeId: string) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    let newText = "";
+    if (node.type === "start") {
+      newText = prompt("Enter welcome message:", node.data.text || "") || "";
+    } else if (node.type === "message") {
+      newText = prompt("Enter message text:", node.data.text || "") || "";
+    } else if (node.type === "question") {
+      newText = prompt("Enter question text:", node.data.text || "") || "";
+    }
+
+    if (newText !== null) {
+      handleUpdateNode(nodeId, { text: newText });
+    }
+  }, [nodes]);
 
   // Handle node updates
   const handleUpdateNode = useCallback((nodeId: string, data: Partial<FlowNode["data"]>) => {
@@ -143,7 +163,18 @@ export default function FlowBuilder() {
         },
       };
 
+      // Auto-link to the last added node if it exists
+      if (lastAddedNodeId && nodeType !== "start") {
+        const newEdge: FlowEdge = {
+          id: `edge-${lastAddedNodeId}-${newNode.id}`,
+          source: lastAddedNodeId,
+          target: newNode.id,
+        };
+        setEdges(prev => [...prev, newEdge]);
+      }
+
       setNodes(prev => [...prev, newNode]);
+      setLastAddedNodeId(newNode.id);
     },
     [nodes]
   );

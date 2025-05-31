@@ -11,15 +11,28 @@ interface NodeData {
 interface CustomNodeProps {
   data: NodeData;
   selected: boolean;
+  id: string;
+  onEdit?: (nodeId: string) => void;
 }
 
-export function StartNode({ data, selected }: CustomNodeProps) {
+export function StartNode({ data, selected, id, onEdit }: CustomNodeProps) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) {
+      onEdit(id);
+    }
+  };
+
   return (
-    <div className={`
-      relative min-w-[200px] p-6 rounded-xl border-2 transition-all duration-300
-      bg-[hsl(var(--cyber-green),0.2)] border-[hsl(var(--cyber-green))]
-      ${selected ? 'neon-glow-green transform scale-105' : 'shadow-lg shadow-[hsl(var(--cyber-green),0.3)]'}
-    `}>
+    <div 
+      className={`
+        relative min-w-[200px] p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer
+        bg-[hsl(var(--cyber-green),0.2)] border-[hsl(var(--cyber-green))]
+        ${selected ? 'neon-glow-green transform scale-105' : 'shadow-lg shadow-[hsl(var(--cyber-green),0.3)]'}
+        hover:transform hover:scale-102 hover:shadow-lg hover:shadow-[hsl(var(--cyber-green),0.5)]
+      `}
+      onClick={handleClick}
+    >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-[hsl(var(--cyber-green))] rounded-full flex items-center justify-center">
@@ -27,7 +40,7 @@ export function StartNode({ data, selected }: CustomNodeProps) {
           </div>
           <span className="text-[hsl(var(--cyber-green))] font-medium">Start</span>
         </div>
-        <div className="w-3 h-3 bg-[hsl(var(--cyber-green))] rounded-full animate-pulse"></div>
+        <Edit3 className="w-4 h-4 text-gray-400 hover:text-[hsl(var(--cyber-green))]" />
       </div>
       <div className="text-sm text-gray-300 italic">
         {data.text || "Click to set welcome message..."}
@@ -42,13 +55,24 @@ export function StartNode({ data, selected }: CustomNodeProps) {
   );
 }
 
-export function MessageNode({ data, selected }: CustomNodeProps) {
+export function MessageNode({ data, selected, id, onEdit }: CustomNodeProps) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) {
+      onEdit(id);
+    }
+  };
+
   return (
-    <div className={`
-      relative min-w-[200px] p-6 rounded-xl border-2 transition-all duration-300
-      bg-[hsl(var(--cyber-blue),0.2)] border-[hsl(var(--cyber-blue))]
-      ${selected ? 'neon-glow-blue transform scale-105' : 'shadow-lg shadow-[hsl(var(--cyber-blue),0.3)]'}
-    `}>
+    <div 
+      className={`
+        relative min-w-[200px] p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer
+        bg-[hsl(var(--cyber-blue),0.2)] border-[hsl(var(--cyber-blue))]
+        ${selected ? 'neon-glow-blue transform scale-105' : 'shadow-lg shadow-[hsl(var(--cyber-blue),0.3)]'}
+        hover:transform hover:scale-102 hover:shadow-lg hover:shadow-[hsl(var(--cyber-blue),0.5)]
+      `}
+      onClick={handleClick}
+    >
       <Handle
         type="target"
         position={Position.Top}
@@ -77,13 +101,24 @@ export function MessageNode({ data, selected }: CustomNodeProps) {
   );
 }
 
-export function QuestionNode({ data, selected }: CustomNodeProps) {
+export function QuestionNode({ data, selected, id, onEdit }: CustomNodeProps) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) {
+      onEdit(id);
+    }
+  };
+
   return (
-    <div className={`
-      relative min-w-[200px] p-6 rounded-xl border-2 transition-all duration-300
-      bg-[hsl(var(--cyber-pink),0.2)] border-[hsl(var(--cyber-pink))]
-      ${selected ? 'neon-glow-pink transform scale-105' : 'shadow-lg shadow-[hsl(var(--cyber-pink),0.3)]'}
-    `}>
+    <div 
+      className={`
+        relative min-w-[200px] p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer
+        bg-[hsl(var(--cyber-pink),0.2)] border-[hsl(var(--cyber-pink))]
+        ${selected ? 'neon-glow-pink transform scale-105' : 'shadow-lg shadow-[hsl(var(--cyber-pink),0.3)]'}
+        hover:transform hover:scale-102 hover:shadow-lg hover:shadow-[hsl(var(--cyber-pink),0.5)]
+      `}
+      onClick={handleClick}
+    >
       <Handle
         type="target"
         position={Position.Top}

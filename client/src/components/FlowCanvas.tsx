@@ -25,6 +25,7 @@ interface FlowCanvasProps {
   onNodeSelect: (node: FlowNode | null) => void;
   onDrop: (event: React.DragEvent) => void;
   onDragOver: (event: React.DragEvent) => void;
+  onEditNode: (nodeId: string) => void;
 }
 
 export function FlowCanvas({
