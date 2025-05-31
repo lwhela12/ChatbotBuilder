@@ -1,0 +1,174 @@
+You got it! Here's a planning/design document for a junior developer to start scaffolding the POC for your Landbot clone. This document focuses on clarity, specific tasks, and clear definitions, which are crucial for a junior developer to succeed.
+Proof of Concept (POC) Scaffolding Design Document: No-Code Chatbot Builder
+Project Name: Chatbot Builder POC
+Version: 0.9
+Date: May 31, 2025
+Author: [Your Name/Team Lead]
+1. Introduction
+This document outlines the scope, technical design, and initial tasks for building a Proof of Concept (POC) for a no-code chatbot builder. The primary goal of this POC is to validate the technical feasibility of our core idea: a drag-and-drop interface for building conversational flows and a basic engine to execute these flows on a webpage.
+This is a scaffolding phase, meaning we are setting up the foundational structure, basic components, and communication channels, not implementing all features.
+2. Goals of the POC Scaffolding
+ * Validate Core UI Interaction: Ensure the drag-and-drop functionality for connecting conversational blocks works.
+ * Validate Basic Data Persistence: Confirm that created flows can be saved and loaded from a database.
+ * Validate Basic Chatbot Execution: Prove that a simple, linear flow built in the UI can be rendered and interacted with in a basic web widget.
+ * Establish Foundational Tech Stack: Set up the basic project structure for both frontend and backend.
+3. Non-Goals for POC Scaffolding
+ * Any form of Artificial Intelligence (NLP, Generative AI).
+ * Advanced block types (conditional logic, integrations, media uploads).
+ * Multiple channels (WhatsApp, Messenger).
+ * User accounts, authentication, or multiple chatbot projects.
+ * Analytics or comprehensive reporting.
+ * Polished UI/UX (focus on functionality).
+ * Scalability or robust error handling.
+4. System Architecture (High-Level)
+The POC will consist of two main components:
+ * Frontend (Web Application): The no-code visual builder where users design flows, and the simple embeddable chatbot widget.
+ * Backend (API Server): To handle saving and loading chatbot flow definitions.
+graph TD
+    A[Frontend: Visual Builder UI] -->|Saves/Loads Flow JSON| B(Backend: API Server)
+    B -->|Persists/Retrieves JSON| C[Database]
+    D[Frontend: Chatbot Widget] -->|Requests Flow JSON| B
+    D -->|Displays Chat Flow| E[User]
+
+5. Technical Stack (Proposed)
+ * Frontend:
+   * Framework: React.js
+   * Drag-and-Drop Library: react-flow (or similar, investigate react-dnd if react-flow is too complex for initial block types)
+   * Styling: Basic CSS or a lightweight CSS framework (e.g., Tailwind CSS for utility classes)
+ * Backend:
+   * Language/Framework: Node.js with Express.js
+   * Database: SQLite (for simplicity in POC; easy to set up and manage locally without a separate server)
+6. Core Features to Scaffold (POC)
+6.1. Frontend: Visual Flow Builder
+ * Canvas: A dedicated area for designing the chatbot flow.
+ * Sidebar/Palette: A simple draggable list of available "blocks."
+   * Block Types (Initial):
+     * Start Block: Always the first block, cannot be deleted.
+     * Message Block: Displays a simple text message.
+     * Question Block (Text Input): Asks a question and expects a free-text response.
+   * Block Properties Panel: When a block is selected, a small panel appears to edit its text content (e.g., the message text for a Message Block, or the question for a Question Block).
+ * Connecting Blocks: Ability to draw simple connections (edges) between block output ports (bottom of a block) and input ports (top of a block).
+ * Saving/Loading:
+   * A "Save" button that sends the current flow definition (JSON) to the backend.
+   * A "Load" button (or automatic load on page refresh) to retrieve the last saved flow.
+6.2. Frontend: Basic Chatbot Widget
+ * A simple, basic HTML/CSS representation of a chat window.
+ * Static Embed: For the POC, this widget will be a fixed part of the application (not a separate embed code yet).
+ * Flow Execution: When the widget loads, it will request the saved flow from the backend and execute it sequentially.
+   * Message Display: Show Message Blocks content.
+   * Text Input: Allow users to type responses for Question Block (Text Input).
+   * Basic Flow Traversal: Move from one block to the next based on connections.
+6.3. Backend: API Server
+ * API Endpoint: /api/flow
+   * POST /api/flow: Receives the JSON representation of the chatbot flow from the frontend and saves it to the SQLite database.
+   * GET /api/flow: Retrieves the most recently saved JSON representation of the chatbot flow from the SQLite database and sends it to the frontend.
+ * Database Interaction: Store and retrieve a single JSON object representing the chatbot flow.
+7. Data Structure (JSON Flow Definition)
+We'll use a JSON structure to define the chatbot flow. This will be the data exchanged between frontend and backend.
+{
+  "nodes": [
+    {
+      "id": "start-node-1",
+      "type": "start", // Custom type for 'Start Block'
+      "position": { "x": 100, "y": 50 },
+      "data": {} // No specific data for start block
+    },
+    {
+      "id": "message-node-2",
+      "type": "message", // Custom type for 'Message Block'
+      "position": { "x": 100, "y": 200 },
+      "data": {
+        "text": "Hello! Welcome to our chatbot."
+      }
+    },
+    {
+      "id": "question-node-3",
+      "type": "question", // Custom type for 'Question Block'
+      "position": { "x": 100, "y": 350 },
+      "data": {
+        "text": "What's your name?"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1-2",
+      "source": "start-node-1",
+      "target": "message-node-2",
+      "sourceHandle": null, // Default handle
+      "targetHandle": null  // Default handle
+    },
+    {
+      "id": "edge-2-3",
+      "source": "message-node-2",
+      "target": "question-node-3",
+      "sourceHandle": null,
+      "targetHandle": null
+    }
+  ]
+}
+
+Note: The react-flow library often uses id, type, position, and data for nodes, and id, source, target for edges. We'll align with this for simplicity.
+8. Initial Setup Tasks for Junior Dev (Actionable Steps)
+Task 1: Project Setup & Basic Configuration
+ * Backend:
+   * Create a new Node.js project (npm init).
+   * Install express, sqlite3 (or better-sqlite3), and cors (for local development).
+   * Set up a basic Express server (server.js or app.js).
+   * Configure SQLite: Create a flow.db file and a table to store the chatbot flow JSON (e.g., a table flows with a single json_data TEXT column).
+   * Create the POST /api/flow and GET /api/flow endpoints. For now, GET should return a static empty flow JSON, and POST should just log the received data.
+ * Frontend:
+   * Create a new React project (npx create-react-app chatbot-builder).
+   * Install react-flow.
+   * Set up basic components: App.js, FlowBuilder.js.
+   * Connect Frontend to Backend: Use axios or fetch to make GET /api/flow requests on component mount. Display the raw JSON on the page.
+Task 2: Implement Visual Flow Builder Canvas
+ * In FlowBuilder.js:
+   * Render the ReactFlow component.
+   * Set up state for nodes and edges.
+   * Implement basic onNodesChange, onEdgesChange handlers to update state.
+   * Implement onConnect to add new edges when dragging between nodes.
+   * Add a placeholder for custom node types (e.g., using nodeTypes prop in ReactFlow).
+   * Ensure the canvas is interactive (pan, zoom).
+Task 3: Create Basic Custom Node Components
+ * Create three React components for your custom nodes:
+   * StartNode.js: A simple box labeled "Start".
+   * MessageNode.js: A box with an editable text area/input for the message.
+   * QuestionNode.js: A box with an editable text area/input for the question.
+ * Integrate these custom nodes into ReactFlow using the nodeTypes prop.
+ * Ensure each node has a defined input handle (top) and output handle (bottom) for connections.
+Task 4: Implement Properties Panel & Data Handling
+ * When a node is clicked in FlowBuilder.js, display a simple "Properties Panel" next to the canvas.
+ * In this panel, show a text input field linked to the data.text property of the selected MessageNode or QuestionNode.
+ * When the input field is changed, update the nodes state in FlowBuilder.js to reflect the new text. This is crucial for data binding.
+Task 5: Connect Save/Load to Backend
+ * Backend:
+   * Refine POST /api/flow: Save the incoming JSON to the SQLite database, overwriting any previous entry.
+   * Refine GET /api/flow: Retrieve the latest JSON from the database. If no data exists, return an empty flow structure (as defined in Section 7, but with just a "start" node).
+ * Frontend:
+   * Implement a "Save Flow" button in FlowBuilder.js. On click, send the current nodes and edges state to POST /api/flow.
+   * On initial load of FlowBuilder.js (e.g., using useEffect), fetch the flow from GET /api/flow and set it as the initial nodes and edges state.
+Task 6: Implement Basic Chatbot Widget Execution
+ * Create a new React component ChatbotWidget.js.
+ * On mount, ChatbotWidget.js should GET /api/flow from the backend.
+ * Parse the received JSON flow definition.
+ * Basic Execution Logic:
+   * Start from the StartNode.
+   * If current node is MessageNode: Display its text, then automatically move to the next connected node.
+   * If current node is QuestionNode: Display its question, provide a simple text input field for the user, and wait for user input. When user submits, log the input (console.log is fine for POC) and then move to the next connected node.
+   * For simplicity, assume only one outgoing edge per node for now (linear flow).
+9. Deliverables for POC Scaffolding
+Upon completion of these tasks, the junior developer should be able to demonstrate:
+ * A running backend server that can save and load a single JSON flow definition.
+ * A React application with:
+   * A visual canvas where "Start," "Message," and "Question (Text Input)" blocks can be added, moved, and connected.
+   * A properties panel that updates the text content of selected blocks.
+   * A "Save" button that persists the flow to the backend.
+   * An "Load" (or auto-load) functionality that fetches the flow from the backend.
+   * A basic chatbot widget that can load the saved flow and execute it in a linear fashion, displaying messages and capturing simple text input.
+10. Communication & Support
+ * Daily Stand-ups: Brief daily check-ins to discuss progress, blockers, and next steps.
+ * Slack Channel: For quick questions and sharing resources.
+ * Code Reviews: All code will be reviewed by a senior developer. Focus on understanding, best practices, and learning.
+ * Ask Questions! No question is too small, especially during a POC.
+This document provides a clear roadmap. Remember to encourage the junior developer to focus on getting the core functionality working first, and then refactor/improve the code as needed. Good luck!
