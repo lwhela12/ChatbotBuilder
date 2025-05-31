@@ -6,20 +6,20 @@ interface NodeData {
   inputType?: string;
   required?: boolean;
   storeResponse?: boolean;
+  onEdit?: (nodeId: string) => void;
 }
 
 interface CustomNodeProps {
   data: NodeData;
   selected: boolean;
   id: string;
-  onEdit?: (nodeId: string) => void;
 }
 
-export function StartNode({ data, selected, id, onEdit }: CustomNodeProps) {
+export function StartNode({ data, selected, id }: CustomNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onEdit) {
-      onEdit(id);
+    if (data.onEdit) {
+      data.onEdit(id);
     }
   };
 
@@ -55,11 +55,11 @@ export function StartNode({ data, selected, id, onEdit }: CustomNodeProps) {
   );
 }
 
-export function MessageNode({ data, selected, id, onEdit }: CustomNodeProps) {
+export function MessageNode({ data, selected, id }: CustomNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onEdit) {
-      onEdit(id);
+    if (data.onEdit) {
+      data.onEdit(id);
     }
   };
 
@@ -101,11 +101,11 @@ export function MessageNode({ data, selected, id, onEdit }: CustomNodeProps) {
   );
 }
 
-export function QuestionNode({ data, selected, id, onEdit }: CustomNodeProps) {
+export function QuestionNode({ data, selected, id }: CustomNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onEdit) {
-      onEdit(id);
+    if (data.onEdit) {
+      data.onEdit(id);
     }
   };
 

@@ -37,6 +37,7 @@ export function FlowCanvas({
   onNodeSelect,
   onDrop,
   onDragOver,
+  onEditNode,
 }: FlowCanvasProps) {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowNodes, setReactFlowNodes, onReactFlowNodesChange] = useNodesState(nodes as Node[]);
@@ -44,8 +45,15 @@ export function FlowCanvas({
 
   // Update React Flow nodes when props change
   useEffect(() => {
-    setReactFlowNodes(nodes as Node[]);
-  }, [nodes, setReactFlowNodes]);
+    const updatedNodes = nodes.map(node => ({
+      ...node,
+      data: {
+        ...node.data,
+        onEdit: onEditNode,
+      }
+    }));
+    setReactFlowNodes(updatedNodes as Node[]);
+  }, [nodes, setReactFlowNodes, onEditNode]);
 
   // Update React Flow edges when props change
   useEffect(() => {

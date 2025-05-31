@@ -286,6 +286,7 @@ export default function FlowBuilder() {
             onNodeSelect={setSelectedNode}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            onEditNode={handleEditNode}
           />
         </div>
 
