@@ -108,20 +108,24 @@ export function PropertiesPanel({
           </div>
           
           <div className="space-y-4">
-            {selectedNode.type !== "start" && (
-              <div>
-                <Label className="text-sm text-gray-400 mb-2">
-                  {selectedNode.type === "message" ? "Message Text" : "Question Text"}
-                </Label>
-                <Textarea
-                  value={localData.text || ""}
-                  onChange={(e) => handleDataChange("text", e.target.value)}
-                  placeholder={`Enter your ${selectedNode.type}...`}
-                  className="bg-[hsl(var(--cyber-dark),0.5)] border-[hsl(var(--cyber-pink),0.5)] text-white placeholder-gray-500 focus:border-[hsl(var(--cyber-pink))] resize-none"
-                  rows={3}
-                />
-              </div>
-            )}
+            <div>
+              <Label className="text-sm text-gray-400 mb-2">
+                {selectedNode.type === "start"
+                  ? "Welcome Message"
+                  : selectedNode.type === "message"
+                  ? "Message Text"
+                  : "Question Text"}
+              </Label>
+              <Textarea
+                value={localData.text || ""}
+                onChange={(e) => handleDataChange("text", e.target.value)}
+                placeholder={`Enter your ${
+                  selectedNode.type === "start" ? "welcome message" : selectedNode.type
+                }...`}
+                className="bg-[hsl(var(--cyber-dark),0.5)] border-[hsl(var(--cyber-pink),0.5)] text-white placeholder-gray-500 focus:border-[hsl(var(--cyber-pink))] resize-none"
+                rows={3}
+              />
+            </div>
             
             {selectedNode.type === "question" && (
               <>

@@ -18,7 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             {
               id: "start-node-1",
               type: "start",
-              position: { x: 100, y: 50 },
+              position: { x: 0, y: 0 },
               data: {}
             }
           ],
