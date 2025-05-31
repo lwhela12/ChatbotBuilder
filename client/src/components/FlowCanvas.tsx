@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -42,12 +42,12 @@ export function FlowCanvas({
   const [reactFlowEdges, setReactFlowEdges, onReactFlowEdgesChange] = useEdgesState(edges as Edge[]);
 
   // Update React Flow nodes when props change
-  useCallback(() => {
+  useEffect(() => {
     setReactFlowNodes(nodes as Node[]);
   }, [nodes, setReactFlowNodes]);
 
   // Update React Flow edges when props change
-  useCallback(() => {
+  useEffect(() => {
     setReactFlowEdges(edges as Edge[]);
   }, [edges, setReactFlowEdges]);
 
@@ -90,8 +90,8 @@ export function FlowCanvas({
         id: edge.id,
         source: edge.source,
         target: edge.target,
-        sourceHandle: edge.sourceHandle,
-        targetHandle: edge.targetHandle,
+        sourceHandle: edge.sourceHandle || undefined,
+        targetHandle: edge.targetHandle || undefined,
       }));
       onEdgesChange(updatedEdges);
     },
@@ -116,7 +116,7 @@ export function FlowCanvas({
   );
 
   return (
-    <div className="flex-1 relative cyber-grid bg-[hsl(var(--cyber-dark))]" ref={reactFlowWrapper}>
+    <div className="flex-1 relative cyber-grid bg-[hsl(var(--cyber-dark))] w-full h-full" ref={reactFlowWrapper}>
       <ReactFlow
         nodes={reactFlowNodes}
         edges={reactFlowEdges}
@@ -129,13 +129,12 @@ export function FlowCanvas({
         nodeTypes={nodeTypes}
         fitView
         attributionPosition="bottom-left"
-        className="font-cyber"
+        className="font-cyber w-full h-full"
       >
         <Background 
           color="hsl(var(--cyber-blue))"
           gap={50}
           size={1}
-          variant="lines"
           className="opacity-20"
         />
         <Controls 

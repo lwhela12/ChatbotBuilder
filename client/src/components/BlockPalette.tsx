@@ -54,7 +54,10 @@ export function BlockPalette({ onDragStart, flowStats }: BlockPaletteProps) {
                   hover:transform hover:scale-105 hover:shadow-lg hover:shadow-[hsl(var(--${block.color}),0.5)]
                 `}
                 draggable
-                onDragStart={(e) => onDragStart(e, block.type)}
+                onDragStart={(e) => {
+                  onDragStart(e, block.type);
+                  e.dataTransfer.setData("application/reactflow", block.type);
+                }}
               >
                 <div className="flex items-center space-x-3">
                   <div className={`w-8 h-8 bg-[hsl(var(--${block.color}),0.2)] rounded-full flex items-center justify-center`}>

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Bot, Save, Download, Play, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,17 +29,17 @@ export default function FlowBuilder() {
     queryFn: async () => {
       const response = await fetch("/api/flow");
       if (!response.ok) throw new Error("Failed to load flow");
-      return response.json() as FlowData;
+      return response.json();
     },
   });
 
   // Initialize nodes and edges when flow data loads
-  useState(() => {
+  useEffect(() => {
     if (flowData) {
       setNodes(flowData.nodes);
       setEdges(flowData.edges);
     }
-  });
+  }, [flowData]);
 
   // Save flow mutation
   const saveFlowMutation = useMutation({
@@ -82,27 +82,30 @@ export default function FlowBuilder() {
     (event: React.DragEvent) => {
       event.preventDefault();
 
-      if (!draggedNodeType || !reactFlowWrapper.current) return;
+      const nodeType = event.dataTransfer.getData("application/reactflow");
+      if (!nodeType) return;
 
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      // Get the canvas element to calculate relative position
+      const canvasElement = event.currentTarget as HTMLElement;
+      const rect = canvasElement.getBoundingClientRect();
+      
       const position = {
-        x: event.clientX - reactFlowBounds.left - 100,
-        y: event.clientY - reactFlowBounds.top - 50,
+        x: event.clientX - rect.left - 100,
+        y: event.clientY - rect.top - 50,
       };
 
       const newNode: FlowNode = {
-        id: generateNodeId(draggedNodeType),
-        type: draggedNodeType as "start" | "message" | "question",
+        id: generateNodeId(nodeType),
+        type: nodeType as "start" | "message" | "question",
         position,
         data: {
-          text: draggedNodeType === "start" ? undefined : `Enter your ${draggedNodeType}...`,
+          text: nodeType === "start" ? undefined : `Enter your ${nodeType}...`,
         },
       };
 
       setNodes(prev => [...prev, newNode]);
-      setDraggedNodeType(null);
     },
-    [draggedNodeType, nodes]
+    [nodes]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
