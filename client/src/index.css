@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 11% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+  
+  /* Cyberpunk colors */
+  --cyber-blue: 180 100% 50%;
+  --cyber-pink: 330 100% 55%;
+  --cyber-purple: 270 70% 60%;
+  --cyber-green: 120 100% 50%;
+  --cyber-dark: 0 0% 4%;
+  --cyber-navy: 225 15% 11%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-mono antialiased bg-[hsl(var(--cyber-dark))] text-foreground;
+  }
+}
+
+/* Cyberpunk-specific styles */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+.font-cyber {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.neon-border {
+  border: 1px solid;
+  border-image: linear-gradient(45deg, hsl(var(--cyber-blue)), hsl(var(--cyber-pink)), hsl(var(--cyber-purple))) 1;
+}
+
+.hologram {
+  background: linear-gradient(135deg, 
+    hsla(var(--cyber-blue), 0.1) 0%, 
+    hsla(var(--cyber-pink), 0.05) 50%, 
+    hsla(var(--cyber-purple), 0.1) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.neon-glow-blue {
+  box-shadow: 0 0 10px hsl(var(--cyber-blue)), 0 0 20px hsl(var(--cyber-blue)), 0 0 30px hsl(var(--cyber-blue));
+}
+
+.neon-glow-pink {
+  box-shadow: 0 0 10px hsl(var(--cyber-pink)), 0 0 20px hsl(var(--cyber-pink)), 0 0 30px hsl(var(--cyber-pink));
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 10px hsl(var(--cyber-purple)), 0 0 20px hsl(var(--cyber-purple)), 0 0 30px hsl(var(--cyber-purple));
+}
+
+.neon-glow-green {
+  box-shadow: 0 0 10px hsl(var(--cyber-green)), 0 0 20px hsl(var(--cyber-green)), 0 0 30px hsl(var(--cyber-green));
+}
+
+.glitch-text {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes glow {
+  from { 
+    box-shadow: 0 0 10px currentColor; 
+  }
+  to { 
+    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; 
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+/* React Flow custom styles */
+.react-flow__handle {
+  background: hsl(var(--cyber-blue));
+  border: 2px solid hsl(var(--cyber-dark));
+  width: 12px;
+  height: 12px;
+}
+
+.react-flow__handle-connecting {
+  background: hsl(var(--cyber-pink));
+}
+
+.react-flow__edge-path {
+  stroke: hsl(var(--cyber-blue));
+  stroke-width: 2;
+  filter: drop-shadow(0 0 5px hsl(var(--cyber-blue)));
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--cyber-pink));
+  filter: drop-shadow(0 0 5px hsl(var(--cyber-pink)));
+}
+
+.react-flow__controls {
+  background: hsla(var(--cyber-navy), 0.8);
+  border: 1px solid hsl(var(--cyber-blue), 0.5);
+  border-radius: 0.5rem;
+}
+
+.react-flow__controls-button {
+  background: transparent;
+  color: hsl(var(--cyber-blue));
+  border: none;
+  border-bottom: 1px solid hsl(var(--cyber-blue), 0.3);
+}
+
+.react-flow__controls-button:hover {
+  background: hsla(var(--cyber-blue), 0.2);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--cyber-dark));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--cyber-blue));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--cyber-pink));
+}
