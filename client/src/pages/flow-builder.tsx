@@ -22,7 +22,6 @@ export default function FlowBuilder() {
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [lastSaved, setLastSaved] = useState<string>("Never");
   const [draggedNodeType, setDraggedNodeType] = useState<string | null>(null);
-  const [welcomePromptShown, setWelcomePromptShown] = useState(false);
 
   // Load flow data
   const { data: flowData, isLoading } = useQuery({
@@ -41,22 +40,6 @@ export default function FlowBuilder() {
       setEdges(flowData.edges);
     }
   }, [flowData]);
-
-  // Prompt for welcome message on first load if start node lacks text
-  useEffect(() => {
-    if (!welcomePromptShown && nodes.length > 0) {
-      const startNode = nodes.find((n) => n.type === "start");
-      if (startNode && !startNode.data.text) {
-        const msg = window.prompt("Enter a welcome message for this flow:", "");
-        if (msg) {
-          handleUpdateNode(startNode.id, { text: msg });
-        }
-      }
-      if (startNode) {
-        setWelcomePromptShown(true);
-      }
-    }
-  }, [nodes, welcomePromptShown, handleUpdateNode]);
 
   // Save flow mutation
   const saveFlowMutation = useMutation({
@@ -87,55 +70,6 @@ export default function FlowBuilder() {
     const existingNodes = nodes.filter(node => node.type === type);
     return `${type}-node-${existingNodes.length + 1}`;
   };
-
-  // Handle drag start from palette
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
-    setDraggedNodeType(nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-
-  // Handle drop on canvas
-  const onDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-
-      const nodeType = event.dataTransfer.getData("application/reactflow");
-      if (!nodeType) return;
-
-      // Get the canvas element to calculate relative position
-      const canvasElement = event.currentTarget as HTMLElement;
-      const rect = canvasElement.getBoundingClientRect();
-      
-      const position = {
-        x: event.clientX - rect.left - 100,
-        y: event.clientY - rect.top - 50,
-      };
-
-      const newNode: FlowNode = {
-        id: generateNodeId(nodeType),
-        type: nodeType as "start" | "message" | "question",
-        position,
-        data: {
-          text: nodeType === "start" ? undefined : `Enter your ${nodeType}...`,
-        },
-      };
-
-      if (nodeType === "start") {
-        const msg = window.prompt("Enter a welcome message for this flow:", "");
-        if (msg) {
-          newNode.data.text = msg;
-        }
-      }
-
-      setNodes(prev => [...prev, newNode]);
-    },
-    [nodes]
-  );
-
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
 
   // Handle node updates
   const handleUpdateNode = useCallback((nodeId: string, data: Partial<FlowNode["data"]>) => {
@@ -175,6 +109,48 @@ export default function FlowBuilder() {
   // Handle new connections
   const handleConnect = useCallback((edge: FlowEdge) => {
     setEdges(prev => [...prev, edge]);
+  }, []);
+
+  // Handle drag start from palette
+  const onDragStart = (event: React.DragEvent, nodeType: string) => {
+    setDraggedNodeType(nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
+  // Handle drop on canvas
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+
+      const nodeType = event.dataTransfer.getData("application/reactflow");
+      if (!nodeType) return;
+
+      // Get the canvas element to calculate relative position
+      const canvasElement = event.currentTarget as HTMLElement;
+      const rect = canvasElement.getBoundingClientRect();
+      
+      const position = {
+        x: event.clientX - rect.left - 100,
+        y: event.clientY - rect.top - 50,
+      };
+
+      const newNode: FlowNode = {
+        id: generateNodeId(nodeType),
+        type: nodeType as "start" | "message" | "question",
+        position,
+        data: {
+          text: nodeType === "start" ? undefined : `Enter your ${nodeType}...`,
+        },
+      };
+
+      setNodes(prev => [...prev, newNode]);
+    },
+    [nodes]
+  );
+
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   // Save flow
