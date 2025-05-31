@@ -29,7 +29,9 @@ export function StartNode({ data, selected }: CustomNodeProps) {
         </div>
         <div className="w-3 h-3 bg-[hsl(var(--cyber-green))] rounded-full animate-pulse"></div>
       </div>
-      <div className="text-sm text-gray-300">Flow entry point</div>
+      <div className="text-sm text-gray-300 italic">
+        {data.text || "Click to set welcome message..."}
+      </div>
       
       <Handle
         type="source"
